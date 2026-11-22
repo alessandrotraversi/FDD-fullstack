@@ -16,7 +16,9 @@
     "status": "node scripts/fdd.mjs status",
     "scaffold": "node .claude/skills/clean-arch/scripts/scaffold.mjs",
     "test:skills": "node --test .claude/skills/clean-arch/scripts/scaffold/test/*.test.mjs",
-    "merge-scaffold": "node scripts/fdd.mjs merge-scaffold"
+    "merge-scaffold": "node scripts/fdd.mjs merge-scaffold",
+    "kiro:sync": "node scripts/kiro-sync.mjs",
+    "kiro:check": "node scripts/kiro-sync.mjs --check"
   },
   "devDependencies": {
     "@playwright/cli": "latest",
@@ -77,13 +79,21 @@
           "source": "microsoft/playwright-cli",
           "skill": "playwright-cli",
           "required": true,
-          "purpose": "Browser driver used by implement-feature smoke checks and evaluator UI/E2E items"
+          "purpose": "Browser driver used by implement-feature smoke checks and evaluator UI/E2E items",
+          "agents": [
+            "claude-code",
+            "kiro-cli"
+          ]
         },
         "frontend-design": {
           "source": "anthropics/skills",
           "skill": "frontend-design",
           "required": false,
-          "purpose": "Distinctive UI direction when no design system is provided in docs/design/"
+          "purpose": "Distinctive UI direction when no design system is provided in docs/design/",
+          "agents": [
+            "claude-code",
+            "kiro-cli"
+          ]
         }
       }
     },
@@ -93,12 +103,13 @@
     "commands": {
       "implement-and-evaluate-tmux": ".claude/commands/implement-and-evaluate-tmux.md",
       "fdd-status": ".claude/commands/fdd-status.md",
-      "fdd-context": ".claude/commands/fdd-context.md"
+      "fdd-context": ".claude/commands/fdd-context.md",
+      "fdd-kiro-spec": ".kiro/steering/fdd-kiro-spec.md (Kiro only)"
     },
     "mcp": {
       "required": {
         "context7": {
-          "config": ".mcp.json",
+          "config": ".mcp.json, .kiro/settings/mcp.json",
           "package": "@upstash/context7-mcp",
           "env": [
             "CONTEXT7_API_KEY (optional, raises rate limits)"
@@ -108,7 +119,7 @@
       },
       "recommended": {
         "playwright": {
-          "config": ".mcp.json",
+          "config": ".mcp.json, .kiro/settings/mcp.json",
           "package": "@playwright/mcp",
           "purpose": "Fallback browser driver when playwright-cli is unavailable; interactive UI debugging"
         }
@@ -134,8 +145,32 @@
       ],
       "optional": [
         "tmux (only for implement-and-evaluate-tmux)",
-        "jq"
+        "jq",
+        "kiro-cli (Kiro target: headless runs and wave mode)"
       ]
+    },
+    "targets": {
+      "claude-code": {
+        "root": ".claude",
+        "instructions": "AGENTS.md (via CLAUDE.md symlink)",
+        "mcp": ".mcp.json",
+        "source_of_truth": true
+      },
+      "kiro": {
+        "root": ".kiro",
+        "instructions": "AGENTS.md + .kiro/steering/",
+        "mcp": ".kiro/settings/mcp.json",
+        "generated_by": "npm run kiro:sync",
+        "agents": [
+          ".kiro/agents/fdd.json",
+          ".kiro/agents/fdd-worker.json",
+          ".kiro/agents/frontend-ui-design.json"
+        ],
+        "hooks": [
+          ".kiro/hooks/fdd-progress-guard.json",
+          ".kiro/hooks/fdd-backend-typecheck.json"
+        ]
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 # FDD-fullstack
 
-Harness de **Feature-Driven Development** para Claude Code (e agentes compatíveis com `.agents/`).
+Harness de **Feature-Driven Development** para **Claude Code** e **Kiro** (IDE e CLI), além de agentes compatíveis com `.agents/`.
 Transforma uma ideia de produto em features entregues, verificadas e com PR aberto, seguindo sempre o mesmo pipeline:
 
 ```
@@ -25,10 +25,12 @@ O conhecimento específico do seu produto entra por `AGENTS.md`, `docs/context/`
 │   ├── commands/          # /implement-and-evaluate-tmux, /fdd-status, /fdd-context
 │   └── settings.json      # MCPs habilitados + permissões base
 ├── .agents -> .claude     # mesmo conteúdo para agentes que leem .agents/
+├── .kiro/                 # versão Kiro: steering, skills (geradas), agents, hooks, settings/mcp.json
 ├── .mcp.json              # servidores MCP do projeto
 ├── AGENTS.md              # instruções curtas e estáveis (CLAUDE.md é symlink)
 ├── package.json           # scripts + bloco "fdd" (skills, MCPs, CLIs necessários)
 ├── scripts/fdd.mjs        # setup / doctor / status
+├── scripts/kiro-sync.mjs  # gera .kiro/ a partir de .claude/
 └── docs/
     ├── guides/            # documentação de uso (comece aqui)
     ├── context/           # conhecimento específico do projeto (você preenche)
@@ -65,6 +67,7 @@ Depois, dentro do Claude Code:
 | [03 — Workflow otimizado](docs/guides/03-workflow.md) | Passo a passo, quando paralelizar, checkpoints humanos |
 | [04 — Adicionando contexto específico](docs/guides/04-adding-context.md) | Onde colocar cada tipo de conhecimento e como ele chega às skills |
 | [05 — MCPs e skills](docs/guides/05-mcp-and-skills.md) | O que é necessário, opcional, e como estender |
+| [06 — Kiro](docs/guides/06-kiro.md) | Setup no Kiro IDE/CLI, agentes, steering, hooks, Kiro Specs |
 
 ## Stack de referência
 

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> Project instructions loaded by every agent session (Claude Code reads this through the `CLAUDE.md` symlink).
+> Project instructions loaded by every agent session (Claude Code reads this through the `CLAUDE.md` symlink; Kiro loads `AGENTS.md` automatically alongside `.kiro/steering/`).
 > Keep this file **short and stable**. Project-specific knowledge lives in `docs/context/` — see
 > `docs/guides/04-adding-context.md`. Replace every `<placeholder>` before the first feature run.
 

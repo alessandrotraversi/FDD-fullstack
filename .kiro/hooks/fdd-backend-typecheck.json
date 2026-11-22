@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Backend typecheck after edits",
+      "description": "Runs the backend TypeScript compiler after the agent saves a backend source file. Enable once apps/backend exists (after the scaffold).",
+      "trigger": "PostFileSave",
+      "matcher": "apps/backend/src/.*\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "cd apps/backend && npx tsc --noEmit -p tsconfig.json"
+      },
+      "timeout": 120,
+      "enabled": false
+    }
+  ]
+}

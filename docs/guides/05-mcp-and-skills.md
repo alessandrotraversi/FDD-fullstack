@@ -11,7 +11,7 @@ A fonte de verdade é o bloco `"fdd"` do `package.json`. `npm run skills:list` e
 | `github` | opcional | `claude mcp add --transport http github https://api.githubcopilot.com/mcp/` | navegar issues/PRs pelo chat. As skills usam o `gh` CLI, não o MCP |
 | `postgres` (read-only) | opcional | qualquer servidor MCP Postgres somente leitura, com `$DATABASE_URL` | consultas ad-hoc ao investigar falhas de avaliação |
 
-`.claude/settings.json` habilita `context7` e `playwright` via `enabledMcpjsonServers`. Para usar um MCP só na sua máquina, adicione-o com `claude mcp add --scope user` (não vai para o repositório).
+`.claude/settings.json` habilita `context7` e `playwright` via `enabledMcpjsonServers`. No Kiro, os mesmos servidores estão em `.kiro/settings/mcp.json` (ver [06 — Kiro](06-kiro.md)); mantenha os dois arquivos alinhados ao adicionar um MCP. Para usar um MCP só na sua máquina, adicione-o com `claude mcp add --scope user` (não vai para o repositório).
 
 **Por que tão poucos MCPs?** As skills foram desenhadas para depender de CLIs (`git`, `gh`, `tmux`, `playwright-cli`, `npm`), que são determinísticos, scriptáveis e funcionam dentro de worktrees e sub-agentes. MCPs entram onde agregam informação (docs de bibliotecas) ou como alternativa interativa.
 

@@ -20,6 +20,8 @@ const COMMANDS = {
   "merge-scaffold": mergeScaffold,
 };
 
+const AGENT_DIRS = { "claude-code": ".claude", "kiro-cli": ".kiro" };
+
 const command = process.argv[2] ?? "doctor";
 if (!COMMANDS[command]) {
   console.error(`Unknown command "${command}". Expected one of: ${Object.keys(COMMANDS).join(", ")}.`);
@@ -51,14 +53,16 @@ async function runSetup() {
 function installExternalSkills() {
   const external = Object.entries(fdd.skills.external);
   for (const [name, spec] of external) {
-    const target = resolve(ROOT, ".claude/skills", name);
-    if (existsSync(resolve(target, "SKILL.md"))) {
-      console.log(`✓ skill ${name} already installed`);
+    const agents = spec.agents ?? ["claude-code"];
+    const missing = agents.filter((agent) => !existsSync(resolve(ROOT, AGENT_DIRS[agent] ?? ".claude", "skills", name, "SKILL.md")));
+    if (missing.length === 0) {
+      console.log(`✓ skill ${name} already installed for ${agents.join(", ")}`);
       continue;
     }
-    console.log(`-> installing skill ${name} from ${spec.source}`);
-    const { ok } = run("npx", ["--yes", "skills", "add", spec.source, "--skill", spec.skill, "--agent", "claude-code", "--yes"]);
-    if (!ok && spec.required) console.error(`✗ required skill ${name} failed to install. Retry manually: npx skills add ${spec.source} --skill ${spec.skill}`);
+    console.log(`-> installing skill ${name} from ${spec.source} for ${missing.join(", ")}`);
+    const agentFlags = missing.flatMap((agent) => ["--agent", agent]);
+    const { ok } = run("npx", ["--yes", "skills", "add", spec.source, "--skill", spec.skill, ...agentFlags, "--yes"]);
+    if (!ok && spec.required) console.error(`✗ required skill ${name} failed to install. Retry manually: npx skills add ${spec.source} --skill ${spec.skill} ${agentFlags.join(" ")}`);
   }
 }
 
@@ -79,8 +83,12 @@ function runDoctor() {
   ];
   for (const [skill, spec] of Object.entries({ ...fdd.skills.local, ...fdd.skills.external })) {
     const path = spec.path ?? `.claude/skills/${skill}`;
-    checks.push([`skill ${skill}`, existsSync(resolve(ROOT, path, "SKILL.md"))]);
+    checks.push([`skill ${skill} (claude)`, existsSync(resolve(ROOT, path, "SKILL.md"))]);
+    checks.push([`skill ${skill} (kiro)`, existsSync(resolve(ROOT, ".kiro/skills", skill, "SKILL.md"))]);
   }
+  checks.push([".kiro in sync with .claude (npm run kiro:sync)", run("node", ["scripts/kiro-sync.mjs", "--check"], { quiet: true }).ok]);
+  checks.push([".kiro/settings/mcp.json present", existsSync(resolve(ROOT, ".kiro/settings/mcp.json"))]);
+  checks.push(["kiro-cli (optional, Kiro headless/wave)", has("kiro-cli")]);
   for (const [label, ok] of checks) console.log(`${ok ? "✓" : "✗"} ${label}`);
   const failed = checks.filter(([, ok]) => !ok).length;
   console.log(`\n${failed === 0 ? "All checks passed." : `${failed} check(s) need attention — see docs/guides/02-installation.md.`}`);

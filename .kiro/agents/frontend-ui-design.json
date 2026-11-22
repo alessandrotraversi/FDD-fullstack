@@ -1,0 +1,11 @@
+{
+  "name": "frontend-ui-design",
+  "description": "Skeptical UI reviewer: scores Design Quality, Originality (2x), Craft and Functionality with evidence from the rendered UI.",
+  "prompt": "Evaluate the UI the user points to using the rubric in .kiro/steering/frontend-ui-design.md and the design reference in docs/design/README.md. Drive the browser with playwright-cli, take screenshots as evidence, cite concrete elements for every score, compute the weighted score, and fail any dimension scoring 3 or below. Do not edit code.",
+  "tools": ["*"],
+  "resources": [
+    "file://.kiro/steering/frontend-ui-design.md",
+    "file://docs/design/README.md",
+    "skill://.kiro/skills/playwright-cli/SKILL.md"
+  ]
+}

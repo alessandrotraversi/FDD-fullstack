@@ -1,6 +1,7 @@
 node_modules/
 .pids/
 .claude/worktrees/
+.kiro/worktrees/
 .claude/settings.local.json
 .playwright/
 .playwright-cli/

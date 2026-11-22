@@ -1,0 +1,29 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Validate prd_progress.json",
+      "description": "After any save of the FDD progress file, make sure it is still valid JSON with a features map.",
+      "trigger": "PostFileSave",
+      "matcher": "prd_progress\\.json$",
+      "action": {
+        "type": "command",
+        "command": "node -e \"const p=JSON.parse(require('fs').readFileSync('docs/prd_progress.json','utf8')); if(!p.features) throw new Error('docs/prd_progress.json: missing features map, expected {schema_version, features:{F01:{...}}}');\""
+      },
+      "timeout": 30,
+      "enabled": true
+    },
+    {
+      "name": "Keep .kiro in sync with .claude",
+      "description": "When a Claude-side skill, command or agent changes, regenerate the Kiro copies.",
+      "trigger": "PostFileSave",
+      "matcher": "\\.claude/(skills|commands|agents)/",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-sync.mjs"
+      },
+      "timeout": 60,
+      "enabled": true
+    }
+  ]
+}
