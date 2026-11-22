@@ -1,0 +1,141 @@
+{
+  "name": "fdd-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Feature-Driven Development harness for Claude Code: PRD → spec/plan/contract → implement → evaluate → fix → PR, with a clean-architecture fullstack scaffold.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "node scripts/fdd.mjs setup",
+    "doctor": "node scripts/fdd.mjs doctor",
+    "skills:install": "node scripts/fdd.mjs skills",
+    "skills:list": "node scripts/fdd.mjs list-skills",
+    "mcp:list": "node scripts/fdd.mjs list-mcp",
+    "status": "node scripts/fdd.mjs status",
+    "scaffold": "node .claude/skills/clean-arch/scripts/scaffold.mjs",
+    "test:skills": "node --test .claude/skills/clean-arch/scripts/scaffold/test/*.test.mjs",
+    "merge-scaffold": "node scripts/fdd.mjs merge-scaffold"
+  },
+  "devDependencies": {
+    "@playwright/cli": "latest",
+    "skills": "latest"
+  },
+  "fdd": {
+    "docs": {
+      "prd": "docs/PRD.md",
+      "progress": "docs/prd_progress.json",
+      "context": "docs/context",
+      "design": "docs/design"
+    },
+    "skills": {
+      "local": {
+        "prd-writer": {
+          "path": ".claude/skills/prd-writer",
+          "stage": "1-define",
+          "purpose": "Interview + 9-section PRD with feature IDs, dependency graph, execution waves and prd_progress.json"
+        },
+        "spec-writer": {
+          "path": ".claude/skills/spec-writer",
+          "stage": "2-specify",
+          "purpose": "spec.md + plan.md + contract.md per feature (single or batch/wave mode)"
+        },
+        "implement-feature": {
+          "path": ".claude/skills/implement-feature",
+          "stage": "3-build",
+          "purpose": "Executes plan.md phase by phase, one commit per phase, produces contract prerequisites"
+        },
+        "evaluator": {
+          "path": ".claude/skills/evaluator",
+          "stage": "4-verify",
+          "purpose": "Exercises every contract item (HTTP/UI/DB/FS) and writes eval-report-<ts>.md"
+        },
+        "fix-runner": {
+          "path": ".claude/skills/fix-runner",
+          "stage": "5-fix",
+          "purpose": "Fixes failed eval items or resolves merge conflicts, one commit per cycle"
+        },
+        "implement-and-evaluate": {
+          "path": ".claude/skills/implement-and-evaluate",
+          "stage": "orchestrator",
+          "purpose": "implement → evaluate → fix loop with retry budget, circuit breaker, journal and PR"
+        },
+        "implement-and-evaluate-tmux": {
+          "path": ".claude/skills/implement-and-evaluate-tmux",
+          "stage": "orchestrator",
+          "purpose": "Runs a whole wave in parallel (one git worktree + tmux window per feature)"
+        },
+        "clean-arch": {
+          "path": ".claude/skills/clean-arch",
+          "stage": "cross-cutting",
+          "purpose": "Clean Architecture + tactical DDD rules, linters, gates and the fullstack scaffold"
+        }
+      },
+      "external": {
+        "playwright-cli": {
+          "source": "microsoft/playwright-cli",
+          "skill": "playwright-cli",
+          "required": true,
+          "purpose": "Browser driver used by implement-feature smoke checks and evaluator UI/E2E items"
+        },
+        "frontend-design": {
+          "source": "anthropics/skills",
+          "skill": "frontend-design",
+          "required": false,
+          "purpose": "Distinctive UI direction when no design system is provided in docs/design/"
+        }
+      }
+    },
+    "agents": {
+      "frontend-ui-design": ".claude/agents/frontend-ui-design.md"
+    },
+    "commands": {
+      "implement-and-evaluate-tmux": ".claude/commands/implement-and-evaluate-tmux.md",
+      "fdd-status": ".claude/commands/fdd-status.md",
+      "fdd-context": ".claude/commands/fdd-context.md"
+    },
+    "mcp": {
+      "required": {
+        "context7": {
+          "config": ".mcp.json",
+          "package": "@upstash/context7-mcp",
+          "env": [
+            "CONTEXT7_API_KEY (optional, raises rate limits)"
+          ],
+          "purpose": "Up-to-date, version-specific library docs for spec-writer and implement-feature"
+        }
+      },
+      "recommended": {
+        "playwright": {
+          "config": ".mcp.json",
+          "package": "@playwright/mcp",
+          "purpose": "Fallback browser driver when playwright-cli is unavailable; interactive UI debugging"
+        }
+      },
+      "optional": {
+        "github": {
+          "install": "claude mcp add --transport http github https://api.githubcopilot.com/mcp/",
+          "purpose": "Issues/PR browsing from chat. The skills themselves use the gh CLI."
+        },
+        "postgres": {
+          "install": "claude mcp add postgres -- <your-read-only-postgres-mcp-server> $DATABASE_URL",
+          "purpose": "Ad-hoc read-only queries against the local DB while debugging eval failures (any read-only Postgres MCP server works)"
+        }
+      }
+    },
+    "cli": {
+      "required": [
+        "node>=20",
+        "npm",
+        "git",
+        "gh (authenticated)",
+        "docker (when the DB is enabled)"
+      ],
+      "optional": [
+        "tmux (only for implement-and-evaluate-tmux)",
+        "jq"
+      ]
+    }
+  }
+}

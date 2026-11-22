@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "prd_path": "docs/PRD.md",
+  "generated_at": "2026-01-01T12:00:00Z",
+  "features": {
+    "F01": {
+      "name": "<Foundation / Authentication>",
+      "priority": 1,
+      "wave": 1,
+      "dependencies": [],
+      "status": "done",
+      "cycles": 1,
+      "failure_reason": null,
+      "report_path": "docs/F01-<slug>/eval-report-2026-01-02T10-00-00Z.md",
+      "started_at": "2026-01-02T08:00:00Z",
+      "updated_at": "2026-01-02T10:05:00Z",
+      "completed_at": "2026-01-02T10:05:00Z"
+    },
+    "F02": {
+      "name": "<Resource> Management",
+      "priority": 1,
+      "wave": 2,
+      "dependencies": ["F01"],
+      "status": "fail",
+      "cycles": 3,
+      "failure_reason": "cycle budget exhausted (3 cycles); last eval: API-CREATE-02 returned 500",
+      "report_path": "docs/F02-<slug>/eval-report-2026-01-03T09-00-00Z.md",
+      "started_at": "2026-01-03T07:00:00Z",
+      "updated_at": "2026-01-03T09:10:00Z",
+      "completed_at": null
+    },
+    "F03": {
+      "name": "<Background Processing>",
+      "priority": 2,
+      "wave": 3,
+      "dependencies": ["F02"],
+      "status": "pending",
+      "cycles": 0,
+      "failure_reason": null,
+      "report_path": null,
+      "started_at": null,
+      "updated_at": "2026-01-01T12:00:00Z",
+      "completed_at": null
+    }
+  }
+}
